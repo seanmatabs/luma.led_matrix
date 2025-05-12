@@ -53,6 +53,30 @@ class FacialExpressions:
                 ((x + 2, y), (x + 2, y + 1))  # Right
             ]
 
+        def create_eye_angry_left(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create an angry eye using line segments."""
+            return [
+                # Top line
+                ((x, y), (x + 2, y)),
+                # Bottom line
+                ((x, y + 1), (x + 2, y + 1)),
+                # Diagonal lines
+                ((x, y), (x + 2, y + 1)),  # Top-left to bottom-right
+                ((x + 2, y), (x, y + 1))   # Top-right to bottom-left
+            ]
+
+        def create_eye_angry_right(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create an angry eye using line segments."""
+            return [
+                # Top line
+                ((x, y), (x + 2, y)),
+                # Bottom line
+                ((x, y + 1), (x + 2, y + 1)),
+                # Diagonal lines
+                ((x, y), (x + 2, y + 1)),  # Top-left to bottom-right
+                ((x + 2, y), (x, y + 1))   # Top-right to bottom-left
+            ]
+
         # Create eye positions with 2-LED gap
         left_pos = 0
         right_pos = 5
@@ -69,8 +93,8 @@ class FacialExpressions:
         wink_right = create_eye_half(right_pos, y_pos)
         neutral_left = create_eye_rectangle(left_pos, y_pos)
         neutral_right = create_eye_rectangle(right_pos, y_pos)
-        angry_left = create_eye_slant_left(left_pos, y_pos)
-        angry_right = create_eye_slant_right(right_pos, y_pos)
+        angry_left = create_eye_angry_left(left_pos, y_pos)
+        angry_right = create_eye_angry_right(right_pos, y_pos)
         sleeping_left = create_eye_closed(left_pos, y_pos)
         sleeping_right = create_eye_closed(right_pos, y_pos)
 
