@@ -3,7 +3,7 @@
 from typing import Dict, List, Tuple
 import time
 
-from .types import ExpressionType, Expression, TalkState
+from .face_types import ExpressionType, Expression, TalkState
 from .display import DisplayInterface
 
 class FacialExpressions:

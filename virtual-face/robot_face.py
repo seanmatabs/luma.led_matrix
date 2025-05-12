@@ -6,7 +6,7 @@ import time
 from .display import MatrixDisplay
 from .expressions import FacialExpressions
 from .speech import SpeechEngine
-from .types import ExpressionType
+from .face_types import ExpressionType
 
 class RobotFace:
     """Main class coordinating facial expressions and speech."""
