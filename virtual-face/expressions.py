@@ -11,70 +11,56 @@ class FacialExpressions:
     def __init__(self, display: DisplayInterface) -> None:
         self.display = display
         # Helper functions to create different eye shapes
-        def create_eye_rectangle(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a full 3x2 rectangle eye."""
-            return [((x, y), (x + 2, y + 1))]
-
-        def create_eye_slant_left(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a slanted eye (for angry expression)."""
-            return [
-                ((x, y), (x + 1, y)),  # Top left
-                ((x + 1, y + 1), (x + 2, y + 1)),  # Bottom right
-                ((x, y), (x + 1, y + 1)),  # Diagonal
-                ((x + 1, y), (x + 2, y + 1))  # Diagonal
-            ]
-
-        def create_eye_slant_right(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a slanted eye (for angry expression)."""
-            return [
-                ((x + 1, y), (x + 2, y)),  # Top right
-                ((x, y + 1), (x + 1, y + 1)),  # Bottom left
-                ((x + 1, y), (x, y + 1)),  # Diagonal
-                ((x + 2, y), (x + 1, y + 1))  # Diagonal
-            ]
-
-        def create_eye_half(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a half-closed eye (for happy/wink)."""
+        def create_eye_happy(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a happy eye (curved like emoji)."""
             return [
                 ((x, y), (x + 2, y)),  # Top line
-                ((x, y + 1), (x + 2, y + 1))  # Bottom line
+                ((x, y + 1), (x + 2, y + 1)),  # Bottom line
+                ((x, y), (x, y + 1)),  # Left side
+                ((x + 2, y), (x + 2, y + 1))   # Right side
             ]
 
-        def create_eye_closed(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a closed eye (for sleeping)."""
-            return [((x, y + 1), (x + 2, y + 1))]  # Single line
+        def create_eye_sad(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a sad eye (with tear)."""
+            return [
+                ((x, y), (x + 2, y)),  # Top line
+                ((x, y + 1), (x + 2, y + 1)),  # Bottom line
+                ((x, y), (x, y + 1)),  # Left side
+                ((x + 2, y), (x + 2, y + 1)),  # Right side
+                ((x + 1, y + 2), (x + 1, y + 2))  # Tear drop
+            ]
 
         def create_eye_surprised(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create a surprised eye (round)."""
+            """Create a surprised eye (round like emoji)."""
             return [
                 ((x, y), (x + 2, y)),  # Top
                 ((x, y + 1), (x + 2, y + 1)),  # Bottom
                 ((x, y), (x, y + 1)),  # Left
-                ((x + 2, y), (x + 2, y + 1))  # Right
+                ((x + 2, y), (x + 2, y + 1)),  # Right
+                ((x + 1, y + 2), (x + 1, y + 2))  # Extra dot for emphasis
             ]
 
-        def create_eye_angry_left(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create an angry eye using line segments."""
+        def create_eye_wink(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a winking eye (curved line)."""
+            return [((x, y + 1), (x + 2, y + 1))]  # Curved line for wink
+
+        def create_eye_neutral(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a neutral eye (simple dot)."""
+            return [((x + 1, y + 1), (x + 1, y + 1))]  # Single dot
+
+        def create_eye_angry(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create an angry eye (slanted like emoji)."""
             return [
-                # Top line
-                ((x, y), (x + 2, y)),
-                # Bottom line
-                ((x, y + 1), (x + 2, y + 1)),
-                # Diagonal lines
-                ((x, y), (x + 2, y + 1)),  # Top-left to bottom-right
-                ((x + 2, y), (x, y + 1))   # Top-right to bottom-left
+                ((x, y), (x + 2, y + 1)),  # Slanted line
+                ((x + 1, y), (x + 1, y + 1))  # Vertical line for emphasis
             ]
 
-        def create_eye_angry_right(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            """Create an angry eye using line segments."""
+        def create_eye_sleeping(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a sleeping eye (curved line with Z)."""
             return [
-                # Top line
-                ((x, y), (x + 2, y)),
-                # Bottom line
-                ((x, y + 1), (x + 2, y + 1)),
-                # Diagonal lines
-                ((x, y), (x + 2, y + 1)),  # Top-left to bottom-right
-                ((x + 2, y), (x, y + 1))   # Top-right to bottom-left
+                ((x, y + 1), (x + 2, y + 1)),  # Curved line
+                ((x + 1, y), (x + 2, y)),  # Z top
+                ((x, y + 2), (x + 1, y + 2))  # Z bottom
             ]
 
         # Create eye positions with 2-LED gap
@@ -83,30 +69,32 @@ class FacialExpressions:
         y_pos = 1
 
         # Create different eye variations
-        happy_left = create_eye_half(left_pos, y_pos)
-        happy_right = create_eye_half(right_pos, y_pos)
-        sad_left = create_eye_half(left_pos, y_pos)
-        sad_right = create_eye_half(right_pos, y_pos)
+        happy_left = create_eye_happy(left_pos, y_pos)
+        happy_right = create_eye_happy(right_pos, y_pos)
+        sad_left = create_eye_sad(left_pos, y_pos)
+        sad_right = create_eye_sad(right_pos, y_pos)
         surprised_left = create_eye_surprised(left_pos, y_pos)
         surprised_right = create_eye_surprised(right_pos, y_pos)
-        wink_left = create_eye_closed(left_pos, y_pos)
-        wink_right = create_eye_half(right_pos, y_pos)
-        neutral_left = create_eye_rectangle(left_pos, y_pos)
-        neutral_right = create_eye_rectangle(right_pos, y_pos)
-        angry_left = create_eye_angry_left(left_pos, y_pos)
-        angry_right = create_eye_angry_right(right_pos, y_pos)
-        sleeping_left = create_eye_closed(left_pos, y_pos)
-        sleeping_right = create_eye_closed(right_pos, y_pos)
+        wink_left = create_eye_wink(left_pos, y_pos)
+        wink_right = create_eye_happy(right_pos, y_pos)
+        neutral_left = create_eye_neutral(left_pos, y_pos)
+        neutral_right = create_eye_neutral(right_pos, y_pos)
+        angry_left = create_eye_angry(left_pos, y_pos)
+        angry_right = create_eye_angry(right_pos, y_pos)
+        sleeping_left = create_eye_sleeping(left_pos, y_pos)
+        sleeping_right = create_eye_sleeping(right_pos, y_pos)
 
         self.expressions: Dict[ExpressionType, Expression] = {
             ExpressionType.HAPPY: Expression(
                 name="happy",
                 points=[],
                 lines=[
-                    *happy_left,  # Left eye (half-closed)
-                    *happy_right,  # Right eye (half-closed)
+                    *happy_left,  # Left eye (happy)
+                    *happy_right,  # Right eye (happy)
                     ((1, 5), (6, 5)),  # Smile top
-                    ((2, 6), (5, 6))   # Smile bottom
+                    ((2, 6), (5, 6)),  # Smile bottom
+                    ((1, 5), (2, 6)),  # Left curve
+                    ((5, 6), (6, 5))   # Right curve
                 ],
                 talk_lines={
                     TalkState.OPEN: [
@@ -114,17 +102,23 @@ class FacialExpressions:
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4)),  # Mouth right
                         ((1, 5), (2, 5)),  # Mouth bottom left
-                        ((5, 5), (6, 5))   # Mouth bottom right
+                        ((5, 5), (6, 5)),  # Mouth bottom right
+                        ((1, 4), (2, 5)),  # Left curve
+                        ((5, 5), (6, 4))   # Right curve
                     ],
                     TalkState.CLOSED: [
                         *happy_left, *happy_right,  # Eyes
-                        ((1, 5), (6, 5)),  # Mouth top
-                        ((2, 6), (5, 6))   # Mouth bottom
+                        ((1, 5), (6, 5)),  # Smile top
+                        ((2, 6), (5, 6)),  # Smile bottom
+                        ((1, 5), (2, 6)),  # Left curve
+                        ((5, 6), (6, 5))   # Right curve
                     ],
                     TalkState.PARTIAL: [
                         *happy_left, *happy_right,  # Eyes
-                        ((1, 5), (6, 5)),  # Mouth top
-                        ((2, 6), (5, 6)),  # Mouth bottom
+                        ((1, 5), (6, 5)),  # Smile top
+                        ((2, 6), (5, 6)),  # Smile bottom
+                        ((1, 5), (2, 6)),  # Left curve
+                        ((5, 6), (6, 5)),  # Right curve
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4))   # Mouth right
                     ]
@@ -135,10 +129,12 @@ class FacialExpressions:
                 name="sad",
                 points=[],
                 lines=[
-                    *sad_left,  # Left eye (half-closed)
-                    *sad_right,  # Right eye (half-closed)
+                    *sad_left,  # Left eye (with tear)
+                    *sad_right,  # Right eye (with tear)
                     ((1, 5), (6, 5)),  # Frown top
-                    ((2, 4), (5, 4))   # Frown bottom
+                    ((2, 4), (5, 4)),  # Frown bottom
+                    ((1, 5), (2, 4)),  # Left curve
+                    ((5, 4), (6, 5))   # Right curve
                 ],
                 talk_lines={
                     TalkState.OPEN: [
@@ -146,17 +142,23 @@ class FacialExpressions:
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4)),  # Mouth right
                         ((1, 5), (2, 5)),  # Mouth bottom left
-                        ((5, 5), (6, 5))   # Mouth bottom right
+                        ((5, 5), (6, 5)),  # Mouth bottom right
+                        ((1, 4), (2, 5)),  # Left curve
+                        ((5, 5), (6, 4))   # Right curve
                     ],
                     TalkState.CLOSED: [
                         *sad_left, *sad_right,  # Eyes
                         ((1, 5), (6, 5)),  # Frown top
-                        ((2, 4), (5, 4))   # Frown bottom
+                        ((2, 4), (5, 4)),  # Frown bottom
+                        ((1, 5), (2, 4)),  # Left curve
+                        ((5, 4), (6, 5))   # Right curve
                     ],
                     TalkState.PARTIAL: [
                         *sad_left, *sad_right,  # Eyes
                         ((1, 5), (6, 5)),  # Frown top
                         ((2, 4), (5, 4)),  # Frown bottom
+                        ((1, 5), (2, 4)),  # Left curve
+                        ((5, 4), (6, 5)),  # Right curve
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4))   # Mouth right
                     ]
@@ -169,8 +171,10 @@ class FacialExpressions:
                 lines=[
                     *surprised_left,  # Left eye (round)
                     *surprised_right,  # Right eye (round)
-                    ((3, 5), (4, 5)),  # O mouth top
-                    ((3, 6), (4, 6))   # O mouth bottom
+                    ((2, 5), (5, 5)),  # O mouth top
+                    ((2, 6), (5, 6)),  # O mouth bottom
+                    ((2, 5), (2, 6)),  # O mouth left
+                    ((5, 5), (5, 6))   # O mouth right
                 ],
                 talk_lines={
                     TalkState.OPEN: [
@@ -178,17 +182,23 @@ class FacialExpressions:
                         ((2, 4), (3, 4)),  # Mouth left
                         ((4, 4), (5, 4)),  # Mouth right
                         ((2, 5), (3, 5)),  # Mouth bottom left
-                        ((4, 5), (5, 5))   # Mouth bottom right
+                        ((4, 5), (5, 5)),  # Mouth bottom right
+                        ((2, 4), (2, 5)),  # Left side
+                        ((5, 4), (5, 5))   # Right side
                     ],
                     TalkState.CLOSED: [
                         *surprised_left, *surprised_right,  # Eyes
-                        ((3, 5), (4, 5)),  # O mouth top
-                        ((3, 6), (4, 6))   # O mouth bottom
+                        ((2, 5), (5, 5)),  # O mouth top
+                        ((2, 6), (5, 6)),  # O mouth bottom
+                        ((2, 5), (2, 6)),  # O mouth left
+                        ((5, 5), (5, 6))   # O mouth right
                     ],
                     TalkState.PARTIAL: [
                         *surprised_left, *surprised_right,  # Eyes
-                        ((3, 5), (4, 5)),  # O mouth top
-                        ((3, 6), (4, 6)),  # O mouth bottom
+                        ((2, 5), (5, 5)),  # O mouth top
+                        ((2, 6), (5, 6)),  # O mouth bottom
+                        ((2, 5), (2, 6)),  # O mouth left
+                        ((5, 5), (5, 6)),  # O mouth right
                         ((2, 4), (3, 4)),  # Mouth left
                         ((4, 4), (5, 4))   # Mouth right
                     ]
@@ -199,10 +209,12 @@ class FacialExpressions:
                 name="wink",
                 points=[],
                 lines=[
-                    *wink_left,  # Left eye (closed)
-                    *wink_right,  # Right eye (half-closed)
+                    *wink_left,  # Left eye (wink)
+                    *wink_right,  # Right eye (happy)
                     ((1, 5), (6, 5)),  # Smile top
-                    ((2, 6), (5, 6))   # Smile bottom
+                    ((2, 6), (5, 6)),  # Smile bottom
+                    ((1, 5), (2, 6)),  # Left curve
+                    ((5, 6), (6, 5))   # Right curve
                 ],
                 talk_lines={
                     TalkState.OPEN: [
@@ -210,17 +222,23 @@ class FacialExpressions:
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4)),  # Mouth right
                         ((1, 5), (2, 5)),  # Mouth bottom left
-                        ((5, 5), (6, 5))   # Mouth bottom right
+                        ((5, 5), (6, 5)),  # Mouth bottom right
+                        ((1, 4), (2, 5)),  # Left curve
+                        ((5, 5), (6, 4))   # Right curve
                     ],
                     TalkState.CLOSED: [
                         *wink_left, *wink_right,  # Eyes
                         ((1, 5), (6, 5)),  # Smile top
-                        ((2, 6), (5, 6))   # Smile bottom
+                        ((2, 6), (5, 6)),  # Smile bottom
+                        ((1, 5), (2, 6)),  # Left curve
+                        ((5, 6), (6, 5))   # Right curve
                     ],
                     TalkState.PARTIAL: [
                         *wink_left, *wink_right,  # Eyes
                         ((1, 5), (6, 5)),  # Smile top
                         ((2, 6), (5, 6)),  # Smile bottom
+                        ((1, 5), (2, 6)),  # Left curve
+                        ((5, 6), (6, 5)),  # Right curve
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4))   # Mouth right
                     ]
@@ -231,8 +249,8 @@ class FacialExpressions:
                 name="neutral",
                 points=[],
                 lines=[
-                    *neutral_left,  # Left eye (full)
-                    *neutral_right,  # Right eye (full)
+                    *neutral_left,  # Left eye (dot)
+                    *neutral_right,  # Right eye (dot)
                     ((2, 5), (5, 5))   # Straight line mouth
                 ],
                 talk_lines={
@@ -262,7 +280,9 @@ class FacialExpressions:
                     *angry_right,  # Right eye (slanted)
                     ((1, 5), (6, 5)),  # Angry mouth top
                     ((2, 4), (3, 4)),  # Angry mouth left
-                    ((4, 4), (5, 4))   # Angry mouth right
+                    ((4, 4), (5, 4)),  # Angry mouth right
+                    ((1, 5), (2, 4)),  # Left curve
+                    ((5, 4), (6, 5))   # Right curve
                 ],
                 talk_lines={
                     TalkState.OPEN: [
@@ -270,19 +290,25 @@ class FacialExpressions:
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4)),  # Mouth right
                         ((1, 5), (2, 5)),  # Mouth bottom left
-                        ((5, 5), (6, 5))   # Mouth bottom right
+                        ((5, 5), (6, 5)),  # Mouth bottom right
+                        ((1, 4), (2, 5)),  # Left curve
+                        ((5, 5), (6, 4))   # Right curve
                     ],
                     TalkState.CLOSED: [
                         *angry_left, *angry_right,  # Eyes
                         ((1, 5), (6, 5)),  # Angry mouth top
                         ((2, 4), (3, 4)),  # Angry mouth left
-                        ((4, 4), (5, 4))   # Angry mouth right
+                        ((4, 4), (5, 4)),  # Angry mouth right
+                        ((1, 5), (2, 4)),  # Left curve
+                        ((5, 4), (6, 5))   # Right curve
                     ],
                     TalkState.PARTIAL: [
                         *angry_left, *angry_right,  # Eyes
                         ((1, 5), (6, 5)),  # Angry mouth top
                         ((2, 4), (3, 4)),  # Angry mouth left
                         ((4, 4), (5, 4)),  # Angry mouth right
+                        ((1, 5), (2, 4)),  # Left curve
+                        ((5, 4), (6, 5)),  # Right curve
                         ((1, 4), (2, 4)),  # Mouth left
                         ((5, 4), (6, 4))   # Mouth right
                     ]
@@ -293,10 +319,27 @@ class FacialExpressions:
                 name="sleeping",
                 points=[],
                 lines=[
-                    *sleeping_left,  # Left eye (closed)
-                    *sleeping_right,  # Right eye (closed)
+                    *sleeping_left,  # Left eye (with Z)
+                    *sleeping_right,  # Right eye (with Z)
                     ((2, 5), (5, 5))   # Mouth
                 ],
+                talk_lines={
+                    TalkState.OPEN: [
+                        *sleeping_left, *sleeping_right,  # Eyes
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4))   # Mouth right
+                    ],
+                    TalkState.CLOSED: [
+                        *sleeping_left, *sleeping_right,  # Eyes
+                        ((2, 5), (5, 5))  # Mouth closed
+                    ],
+                    TalkState.PARTIAL: [
+                        *sleeping_left, *sleeping_right,  # Eyes
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4)),  # Mouth right
+                        ((2, 5), (5, 5))   # Mouth bottom
+                    ]
+                },
                 duration=1.0
             )
         }
