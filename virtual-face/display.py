@@ -10,6 +10,7 @@ class DisplayInterface(Protocol):
     """Protocol defining the interface for display operations."""
     def draw_points(self, points: List[Tuple[int, int]], fill: str = "white") -> None: ...
     def draw_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]], fill: str = "white") -> None: ...
+    def draw_rectangle(self, top_left: Tuple[int, int], bottom_right: Tuple[int, int], fill: str = "white") -> None: ...
     def clear(self) -> None: ...
     def set_brightness(self, intensity: int) -> None: ...
 
@@ -52,7 +53,19 @@ class MatrixDisplay(DisplayInterface):
                 draw.rectangle(self.device.bounding_box, outline="black", fill="black")
                 self._needs_clear = False
             for start, end in lines:
-                draw.line([start, end], fill=fill)
+                # If the line forms a rectangle (start and end are diagonal corners)
+                if abs(start[0] - end[0]) > 0 and abs(start[1] - end[1]) > 0:
+                    self.draw_rectangle(start, end, fill)
+                else:
+                    draw.line([start, end], fill=fill)
+
+    def draw_rectangle(self, top_left: Tuple[int, int], bottom_right: Tuple[int, int], fill: str = "white") -> None:
+        """Draw a filled rectangle efficiently."""
+        with canvas(self.device) as draw:
+            if self._needs_clear:
+                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
+                self._needs_clear = False
+            draw.rectangle([top_left, bottom_right], outline=fill, fill=fill)
 
     def clear(self) -> None:
         with canvas(self.device) as draw:
