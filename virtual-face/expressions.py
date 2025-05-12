@@ -172,6 +172,27 @@ class FacialExpressions:
                     ((3, 5), (4, 5)),  # O mouth top
                     ((3, 6), (4, 6))   # O mouth bottom
                 ],
+                talk_lines={
+                    TalkState.OPEN: [
+                        *surprised_left, *surprised_right,  # Eyes
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4)),  # Mouth right
+                        ((2, 5), (3, 5)),  # Mouth bottom left
+                        ((4, 5), (5, 5))   # Mouth bottom right
+                    ],
+                    TalkState.CLOSED: [
+                        *surprised_left, *surprised_right,  # Eyes
+                        ((3, 5), (4, 5)),  # O mouth top
+                        ((3, 6), (4, 6))   # O mouth bottom
+                    ],
+                    TalkState.PARTIAL: [
+                        *surprised_left, *surprised_right,  # Eyes
+                        ((3, 5), (4, 5)),  # O mouth top
+                        ((3, 6), (4, 6)),  # O mouth bottom
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4))   # Mouth right
+                    ]
+                },
                 duration=1.0
             ),
             ExpressionType.WINK: Expression(
