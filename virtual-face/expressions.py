@@ -204,6 +204,27 @@ class FacialExpressions:
                     ((1, 5), (6, 5)),  # Smile top
                     ((2, 6), (5, 6))   # Smile bottom
                 ],
+                talk_lines={
+                    TalkState.OPEN: [
+                        *wink_left, *wink_right,  # Eyes
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4)),  # Mouth right
+                        ((1, 5), (2, 5)),  # Mouth bottom left
+                        ((5, 5), (6, 5))   # Mouth bottom right
+                    ],
+                    TalkState.CLOSED: [
+                        *wink_left, *wink_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Smile top
+                        ((2, 6), (5, 6))   # Smile bottom
+                    ],
+                    TalkState.PARTIAL: [
+                        *wink_left, *wink_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Smile top
+                        ((2, 6), (5, 6)),  # Smile bottom
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4))   # Mouth right
+                    ]
+                },
                 duration=1.0
             ),
             ExpressionType.NEUTRAL: Expression(
