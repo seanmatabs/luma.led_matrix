@@ -35,42 +35,31 @@ class MatrixDisplay(DisplayInterface):
             width=width,
             height=height
         )
-        # Only create virtual viewport if needed for scrolling
         self.virtual = None
-        self._needs_clear = True
 
     def draw_points(self, points: List[Tuple[int, int]], fill: str = "white") -> None:
         with canvas(self.device) as draw:
-            if self._needs_clear:
-                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
-                self._needs_clear = False
             for point in points:
                 draw.point(point, fill=fill)
 
     def draw_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]], fill: str = "white") -> None:
         with canvas(self.device) as draw:
-            if self._needs_clear:
-                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
-                self._needs_clear = False
             for start, end in lines:
                 # If the line forms a rectangle (start and end are diagonal corners)
                 if abs(start[0] - end[0]) > 0 and abs(start[1] - end[1]) > 0:
-                    self.draw_rectangle(start, end, fill)
+                    draw.rectangle([start, end], outline=fill, fill=fill)
                 else:
                     draw.line([start, end], fill=fill)
 
     def draw_rectangle(self, top_left: Tuple[int, int], bottom_right: Tuple[int, int], fill: str = "white") -> None:
         """Draw a filled rectangle efficiently."""
         with canvas(self.device) as draw:
-            if self._needs_clear:
-                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
-                self._needs_clear = False
             draw.rectangle([top_left, bottom_right], outline=fill, fill=fill)
 
     def clear(self) -> None:
+        """Clear the display."""
         with canvas(self.device) as draw:
             draw.rectangle(self.device.bounding_box, outline="black", fill="black")
-        self._needs_clear = True
 
     def set_brightness(self, intensity: int) -> None:
         if not 0 <= intensity <= 15:
