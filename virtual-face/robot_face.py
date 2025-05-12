@@ -40,9 +40,13 @@ class RobotFace:
         expression = self.expressions.get_expression(expression_type)
         display_duration = duration if duration is not None else expression.duration
         
+        # Enable/disable scroll mode
+        self.display.set_scroll_mode(scroll)
+        
         if scroll:
             for offset in range(self.display.device.width):
-                self.display.virtual.set_position((offset, 0))
+                if self.display.virtual is not None:  # Check if scroll mode is enabled
+                    self.display.virtual.set_position((offset, 0))
                 self.expressions.draw_expression(expression_type)
                 time.sleep(0.1)
         else:

@@ -34,23 +34,39 @@ class MatrixDisplay(DisplayInterface):
             width=width,
             height=height
         )
-        self.virtual = viewport(self.device, width=self.device.width, height=self.device.height)
+        # Only create virtual viewport if needed for scrolling
+        self.virtual = None
+        self._needs_clear = True
 
     def draw_points(self, points: List[Tuple[int, int]], fill: str = "white") -> None:
-        with canvas(self.virtual) as draw:
+        with canvas(self.device) as draw:
+            if self._needs_clear:
+                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
+                self._needs_clear = False
             for point in points:
                 draw.point(point, fill=fill)
 
     def draw_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]], fill: str = "white") -> None:
-        with canvas(self.virtual) as draw:
+        with canvas(self.device) as draw:
+            if self._needs_clear:
+                draw.rectangle(self.device.bounding_box, outline="black", fill="black")
+                self._needs_clear = False
             for start, end in lines:
                 draw.line([start, end], fill=fill)
 
     def clear(self) -> None:
         with canvas(self.device) as draw:
             draw.rectangle(self.device.bounding_box, outline="black", fill="black")
+        self._needs_clear = True
 
     def set_brightness(self, intensity: int) -> None:
         if not 0 <= intensity <= 15:
             raise ValueError("Intensity must be between 0 and 15")
-        self.device.contrast(intensity * 16) 
+        self.device.contrast(intensity * 16)
+
+    def set_scroll_mode(self, enable: bool) -> None:
+        """Enable or disable scroll mode by creating/destroying virtual viewport."""
+        if enable and self.virtual is None:
+            self.virtual = viewport(self.device, width=self.device.width, height=self.device.height)
+        elif not enable and self.virtual is not None:
+            self.virtual = None 
