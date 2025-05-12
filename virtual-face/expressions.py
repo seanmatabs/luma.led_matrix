@@ -10,39 +10,94 @@ class FacialExpressions:
     """Manages facial expressions and their rendering."""
     def __init__(self, display: DisplayInterface) -> None:
         self.display = display
-        # Helper function to create eye rectangles
-        def create_eye(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
-            return [((x, y), (x + 2, y + 1))]  # 3x2 rectangle for each eye
+        # Helper functions to create different eye shapes
+        def create_eye_rectangle(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a full 3x2 rectangle eye."""
+            return [((x, y), (x + 2, y + 1))]
 
-        # Create eye rectangles for all expressions with 2-LED gap between eyes
-        # Left eye at (0,1) to (2,2), right eye at (5,1) to (7,2)
-        left_eye = create_eye(0, 1)  # Left eye at (0,1) to (2,2)
-        right_eye = create_eye(5, 1)  # Right eye at (5,1) to (7,2)
+        def create_eye_slant_left(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a slanted eye (for angry expression)."""
+            return [
+                ((x, y), (x + 1, y)),  # Top left
+                ((x + 1, y + 1), (x + 2, y + 1)),  # Bottom right
+                ((x, y), (x + 1, y + 1)),  # Diagonal
+                ((x + 1, y), (x + 2, y + 1))  # Diagonal
+            ]
+
+        def create_eye_slant_right(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a slanted eye (for angry expression)."""
+            return [
+                ((x + 1, y), (x + 2, y)),  # Top right
+                ((x, y + 1), (x + 1, y + 1)),  # Bottom left
+                ((x + 1, y), (x, y + 1)),  # Diagonal
+                ((x + 2, y), (x + 1, y + 1))  # Diagonal
+            ]
+
+        def create_eye_half(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a half-closed eye (for happy/wink)."""
+            return [
+                ((x, y), (x + 2, y)),  # Top line
+                ((x, y + 1), (x + 2, y + 1))  # Bottom line
+            ]
+
+        def create_eye_closed(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a closed eye (for sleeping)."""
+            return [((x, y + 1), (x + 2, y + 1))]  # Single line
+
+        def create_eye_surprised(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
+            """Create a surprised eye (round)."""
+            return [
+                ((x, y), (x + 2, y)),  # Top
+                ((x, y + 1), (x + 2, y + 1)),  # Bottom
+                ((x, y), (x, y + 1)),  # Left
+                ((x + 2, y), (x + 2, y + 1))  # Right
+            ]
+
+        # Create eye positions with 2-LED gap
+        left_pos = 0
+        right_pos = 5
+        y_pos = 1
+
+        # Create different eye variations
+        happy_left = create_eye_half(left_pos, y_pos)
+        happy_right = create_eye_half(right_pos, y_pos)
+        sad_left = create_eye_half(left_pos, y_pos)
+        sad_right = create_eye_half(right_pos, y_pos)
+        surprised_left = create_eye_surprised(left_pos, y_pos)
+        surprised_right = create_eye_surprised(right_pos, y_pos)
+        wink_left = create_eye_closed(left_pos, y_pos)
+        wink_right = create_eye_half(right_pos, y_pos)
+        neutral_left = create_eye_rectangle(left_pos, y_pos)
+        neutral_right = create_eye_rectangle(right_pos, y_pos)
+        angry_left = create_eye_slant_left(left_pos, y_pos)
+        angry_right = create_eye_slant_right(right_pos, y_pos)
+        sleeping_left = create_eye_closed(left_pos, y_pos)
+        sleeping_right = create_eye_closed(right_pos, y_pos)
 
         self.expressions: Dict[ExpressionType, Expression] = {
             ExpressionType.HAPPY: Expression(
                 name="happy",
                 points=[],
                 lines=[
-                    *left_eye,  # Left eye rectangle
-                    *right_eye,  # Right eye rectangle
+                    *happy_left,  # Left eye (half-closed)
+                    *happy_right,  # Right eye (half-closed)
                     ((1, 5), (6, 5)),  # Smile top
                     ((2, 6), (5, 6))   # Smile bottom
                 ],
                 talk_lines={
                     TalkState.OPEN: [
-                        *left_eye, *right_eye,  # Eyes
+                        *happy_left, *happy_right,  # Eyes
                         ((1, 5), (6, 5)),  # Mouth top
                         ((2, 6), (5, 6)),  # Mouth bottom
                         ((3, 4), (4, 4))   # Mouth middle
                     ],
                     TalkState.CLOSED: [
-                        *left_eye, *right_eye,  # Eyes
+                        *happy_left, *happy_right,  # Eyes
                         ((1, 5), (6, 5)),  # Mouth top
                         ((2, 6), (5, 6))   # Mouth bottom
                     ],
                     TalkState.PARTIAL: [
-                        *left_eye, *right_eye,  # Eyes
+                        *happy_left, *happy_right,  # Eyes
                         ((1, 5), (6, 5)),  # Mouth top
                         ((2, 6), (5, 6)),  # Mouth bottom
                         ((3, 5), (4, 5))   # Mouth middle
@@ -54,8 +109,8 @@ class FacialExpressions:
                 name="sad",
                 points=[],
                 lines=[
-                    *left_eye,  # Left eye rectangle
-                    *right_eye,  # Right eye rectangle
+                    *sad_left,  # Left eye (half-closed)
+                    *sad_right,  # Right eye (half-closed)
                     ((1, 5), (6, 5)),  # Frown top
                     ((2, 4), (5, 4))   # Frown bottom
                 ],
@@ -65,8 +120,8 @@ class FacialExpressions:
                 name="surprised",
                 points=[],
                 lines=[
-                    *left_eye,  # Left eye rectangle
-                    *right_eye,  # Right eye rectangle
+                    *surprised_left,  # Left eye (round)
+                    *surprised_right,  # Right eye (round)
                     ((3, 5), (4, 5)),  # O mouth top
                     ((3, 6), (4, 6))   # O mouth bottom
                 ],
@@ -76,8 +131,8 @@ class FacialExpressions:
                 name="wink",
                 points=[],
                 lines=[
-                    *right_eye,  # Right eye rectangle
-                    ((0, 1), (2, 2)),  # Left eye (wink)
+                    *wink_left,  # Left eye (closed)
+                    *wink_right,  # Right eye (half-closed)
                     ((1, 5), (6, 5)),  # Smile top
                     ((2, 6), (5, 6))   # Smile bottom
                 ],
@@ -87,21 +142,21 @@ class FacialExpressions:
                 name="neutral",
                 points=[],
                 lines=[
-                    *left_eye,  # Left eye rectangle
-                    *right_eye,  # Right eye rectangle
+                    *neutral_left,  # Left eye (full)
+                    *neutral_right,  # Right eye (full)
                     ((2, 5), (5, 5))   # Straight line mouth
                 ],
                 talk_lines={
                     TalkState.OPEN: [
-                        *left_eye, *right_eye,  # Eyes
+                        *neutral_left, *neutral_right,  # Eyes
                         ((2, 4), (5, 4))  # Mouth open
                     ],
                     TalkState.CLOSED: [
-                        *left_eye, *right_eye,  # Eyes
+                        *neutral_left, *neutral_right,  # Eyes
                         ((2, 5), (5, 5))  # Mouth closed
                     ],
                     TalkState.PARTIAL: [
-                        *left_eye, *right_eye,  # Eyes
+                        *neutral_left, *neutral_right,  # Eyes
                         ((2, 4), (5, 4)),  # Mouth top
                         ((2, 5), (5, 5))   # Mouth bottom
                     ]
@@ -112,8 +167,8 @@ class FacialExpressions:
                 name="angry",
                 points=[],
                 lines=[
-                    *left_eye,  # Left eye rectangle
-                    *right_eye,  # Right eye rectangle
+                    *angry_left,  # Left eye (slanted)
+                    *angry_right,  # Right eye (slanted)
                     ((1, 5), (6, 5)),  # Angry mouth top
                     ((2, 4), (3, 4)),  # Angry mouth left
                     ((4, 4), (5, 4))   # Angry mouth right
@@ -124,8 +179,8 @@ class FacialExpressions:
                 name="sleeping",
                 points=[],
                 lines=[
-                    *right_eye,  # Right eye rectangle
-                    ((0, 1), (2, 2)),  # Left eye (sleeping)
+                    *sleeping_left,  # Left eye (closed)
+                    *sleeping_right,  # Right eye (closed)
                     ((2, 5), (5, 5))   # Mouth
                 ],
                 duration=1.0
