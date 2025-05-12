@@ -12,12 +12,28 @@ class SpeechEngine:
         self.display = display
         self.expressions = expressions
         self.states = [TalkState.OPEN, TalkState.PARTIAL, TalkState.CLOSED]
-        self.weights = [0.3, 0.4, 0.3]
+        # Adjusted weights for more natural movement
+        self.weights = [0.25, 0.5, 0.25]  # More weight to PARTIAL state
+        self._last_state = None
+        self._state_duration = 0.0
 
     def _get_talk_state(self) -> Generator[TalkState, None, None]:
         """Generate a sequence of talk states for natural-looking speech."""
         while True:
-            yield random.choices(self.states, weights=self.weights)[0]
+            # Avoid repeating the same state too often
+            available_states = [s for s in self.states if s != self._last_state]
+            if not available_states:
+                available_states = self.states
+            
+            # Adjust weights based on current state
+            weights = self.weights.copy()
+            if self._last_state:
+                last_idx = self.states.index(self._last_state)
+                weights[last_idx] *= 0.3  # Reduce chance of repeating state
+            
+            state = random.choices(available_states, weights=weights)[0]
+            self._last_state = state
+            yield state
 
     def _draw_talking_expression(self, expression: Expression, talk_state: TalkState) -> None:
         """Draw an expression with a specific talk state."""
@@ -40,15 +56,28 @@ class SpeechEngine:
         if not expression.talk_lines:
             raise ValueError(f"Expression {expression_type.name} does not support talking")
         
-        states_per_second = (words_per_minute * 5) / 60
-        state_duration = 1.0 / states_per_second
+        # Calculate timing
+        states_per_second = (words_per_minute * 4) / 60  # Reduced from 5 to 4 for smoother animation
+        min_state_duration = 0.1  # Minimum time per state
+        state_duration = max(1.0 / states_per_second, min_state_duration)
         
         end_time = time.time() + duration
         talk_states = self._get_talk_state()
+        last_draw_time = time.time()
         
         while time.time() < end_time:
-            self._draw_talking_expression(expression, next(talk_states))
-            time.sleep(state_duration)
+            current_time = time.time()
+            elapsed = current_time - last_draw_time
+            
+            # Only change state if enough time has passed
+            if elapsed >= state_duration:
+                self._draw_talking_expression(expression, next(talk_states))
+                last_draw_time = current_time
+                # Add a small random delay for more natural movement
+                time.sleep(random.uniform(0.02, 0.05))
+            else:
+                # Small sleep to prevent CPU overuse
+                time.sleep(0.01)
 
     def say_phrase(
         self,
@@ -58,7 +87,8 @@ class SpeechEngine:
     ) -> None:
         """Say a specific phrase with appropriate timing."""
         word_count = len(phrase.split())
-        duration = (word_count * 60) / words_per_minute
+        # Add a small pause between words
+        duration = (word_count * 65) / words_per_minute  # Increased from 60 to 65 to account for pauses
         
         print(f"Robot says: {phrase}")
         self.talk(expression_type, duration=duration, words_per_minute=words_per_minute) 
