@@ -111,9 +111,10 @@ class FacialExpressions:
                 talk_lines={
                     TalkState.OPEN: [
                         *happy_left, *happy_right,  # Eyes
-                        ((1, 5), (6, 5)),  # Mouth top
-                        ((2, 6), (5, 6)),  # Mouth bottom
-                        ((3, 4), (4, 4))   # Mouth middle
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4)),  # Mouth right
+                        ((1, 5), (2, 5)),  # Mouth bottom left
+                        ((5, 5), (6, 5))   # Mouth bottom right
                     ],
                     TalkState.CLOSED: [
                         *happy_left, *happy_right,  # Eyes
@@ -124,7 +125,8 @@ class FacialExpressions:
                         *happy_left, *happy_right,  # Eyes
                         ((1, 5), (6, 5)),  # Mouth top
                         ((2, 6), (5, 6)),  # Mouth bottom
-                        ((3, 5), (4, 5))   # Mouth middle
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4))   # Mouth right
                     ]
                 },
                 duration=1.0
@@ -138,6 +140,27 @@ class FacialExpressions:
                     ((1, 5), (6, 5)),  # Frown top
                     ((2, 4), (5, 4))   # Frown bottom
                 ],
+                talk_lines={
+                    TalkState.OPEN: [
+                        *sad_left, *sad_right,  # Eyes
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4)),  # Mouth right
+                        ((1, 5), (2, 5)),  # Mouth bottom left
+                        ((5, 5), (6, 5))   # Mouth bottom right
+                    ],
+                    TalkState.CLOSED: [
+                        *sad_left, *sad_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Frown top
+                        ((2, 4), (5, 4))   # Frown bottom
+                    ],
+                    TalkState.PARTIAL: [
+                        *sad_left, *sad_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Frown top
+                        ((2, 4), (5, 4)),  # Frown bottom
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4))   # Mouth right
+                    ]
+                },
                 duration=1.0
             ),
             ExpressionType.SURPRISED: Expression(
@@ -173,7 +196,8 @@ class FacialExpressions:
                 talk_lines={
                     TalkState.OPEN: [
                         *neutral_left, *neutral_right,  # Eyes
-                        ((2, 4), (5, 4))  # Mouth open
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4))   # Mouth right
                     ],
                     TalkState.CLOSED: [
                         *neutral_left, *neutral_right,  # Eyes
@@ -181,7 +205,8 @@ class FacialExpressions:
                     ],
                     TalkState.PARTIAL: [
                         *neutral_left, *neutral_right,  # Eyes
-                        ((2, 4), (5, 4)),  # Mouth top
+                        ((2, 4), (3, 4)),  # Mouth left
+                        ((4, 4), (5, 4)),  # Mouth right
                         ((2, 5), (5, 5))   # Mouth bottom
                     ]
                 },
@@ -197,6 +222,29 @@ class FacialExpressions:
                     ((2, 4), (3, 4)),  # Angry mouth left
                     ((4, 4), (5, 4))   # Angry mouth right
                 ],
+                talk_lines={
+                    TalkState.OPEN: [
+                        *angry_left, *angry_right,  # Eyes
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4)),  # Mouth right
+                        ((1, 5), (2, 5)),  # Mouth bottom left
+                        ((5, 5), (6, 5))   # Mouth bottom right
+                    ],
+                    TalkState.CLOSED: [
+                        *angry_left, *angry_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Angry mouth top
+                        ((2, 4), (3, 4)),  # Angry mouth left
+                        ((4, 4), (5, 4))   # Angry mouth right
+                    ],
+                    TalkState.PARTIAL: [
+                        *angry_left, *angry_right,  # Eyes
+                        ((1, 5), (6, 5)),  # Angry mouth top
+                        ((2, 4), (3, 4)),  # Angry mouth left
+                        ((4, 4), (5, 4)),  # Angry mouth right
+                        ((1, 4), (2, 4)),  # Mouth left
+                        ((5, 4), (6, 4))   # Mouth right
+                    ]
+                },
                 duration=1.0
             ),
             ExpressionType.SLEEPING: Expression(
