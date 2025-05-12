@@ -43,18 +43,38 @@ class MatrixDisplay(DisplayInterface):
                 draw.point(point, fill=fill)
 
     def draw_lines(self, lines: List[Tuple[Tuple[int, int], Tuple[int, int]]], fill: str = "white") -> None:
+        """Draw lines or rectangles. For rectangles, provide diagonal corners."""
         with canvas(self.device) as draw:
             for start, end in lines:
-                # If the line forms a rectangle (start and end are diagonal corners)
-                if abs(start[0] - end[0]) > 0 and abs(start[1] - end[1]) > 0:
-                    draw.rectangle([start, end], outline=fill, fill=fill)
+                # Check if this is a rectangle (diagonal corners)
+                is_rectangle = (
+                    abs(start[0] - end[0]) > 0 and 
+                    abs(start[1] - end[1]) > 0 and
+                    # Only draw as rectangle if it's a proper rectangle (not diagonal)
+                    (start[0] == end[0] or start[1] == end[1] or
+                     abs(start[0] - end[0]) == abs(start[1] - end[1]))
+                )
+                
+                if is_rectangle:
+                    # Ensure coordinates are in correct order for rectangle
+                    x0 = min(start[0], end[0])
+                    y0 = min(start[1], end[1])
+                    x1 = max(start[0], end[0])
+                    y1 = max(start[1], end[1])
+                    draw.rectangle([(x0, y0), (x1, y1)], outline=fill, fill=fill)
                 else:
+                    # Draw as a line
                     draw.line([start, end], fill=fill)
 
     def draw_rectangle(self, top_left: Tuple[int, int], bottom_right: Tuple[int, int], fill: str = "white") -> None:
         """Draw a filled rectangle efficiently."""
         with canvas(self.device) as draw:
-            draw.rectangle([top_left, bottom_right], outline=fill, fill=fill)
+            # Ensure coordinates are in correct order
+            x0 = min(top_left[0], bottom_right[0])
+            y0 = min(top_left[1], bottom_right[1])
+            x1 = max(top_left[0], bottom_right[0])
+            y1 = max(top_left[1], bottom_right[1])
+            draw.rectangle([(x0, y0), (x1, y1)], outline=fill, fill=fill)
 
     def clear(self) -> None:
         """Clear the display."""
