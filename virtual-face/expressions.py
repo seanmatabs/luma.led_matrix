@@ -14,14 +14,15 @@ class FacialExpressions:
         def create_eye(x: int, y: int) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
             return [((x, y), (x + 2, y + 1))]  # 3x2 rectangle for each eye
 
-        # Create eye rectangles for all expressions
-        left_eye = create_eye(1, 1)  # Left eye at (1,1) to (3,2)
-        right_eye = create_eye(4, 1)  # Right eye at (4,1) to (6,2)
+        # Create eye rectangles for all expressions with 2-LED gap between eyes
+        # Left eye at (0,1) to (2,2), right eye at (5,1) to (7,2)
+        left_eye = create_eye(0, 1)  # Left eye at (0,1) to (2,2)
+        right_eye = create_eye(5, 1)  # Right eye at (5,1) to (7,2)
 
         self.expressions: Dict[ExpressionType, Expression] = {
             ExpressionType.HAPPY: Expression(
                 name="happy",
-                points=[],  # No points, using rectangles for eyes
+                points=[],
                 lines=[
                     *left_eye,  # Left eye rectangle
                     *right_eye,  # Right eye rectangle
@@ -76,7 +77,7 @@ class FacialExpressions:
                 points=[],
                 lines=[
                     *right_eye,  # Right eye rectangle
-                    ((1, 1), (3, 2)),  # Left eye (wink)
+                    ((0, 1), (2, 2)),  # Left eye (wink)
                     ((1, 5), (6, 5)),  # Smile top
                     ((2, 6), (5, 6))   # Smile bottom
                 ],
@@ -124,7 +125,7 @@ class FacialExpressions:
                 points=[],
                 lines=[
                     *right_eye,  # Right eye rectangle
-                    ((1, 1), (3, 2)),  # Left eye (sleeping)
+                    ((0, 1), (2, 2)),  # Left eye (sleeping)
                     ((2, 5), (5, 5))   # Mouth
                 ],
                 duration=1.0
@@ -153,20 +154,20 @@ class FacialExpressions:
         self,
         from_expression: ExpressionType,
         to_expression: ExpressionType,
-        steps: int = 5,  # Reduced steps for more stability
-        duration: float = 0.5  # Shorter duration
+        steps: int = 5,
+        duration: float = 0.5
     ) -> None:
         """Animate a transition between two expressions."""
         if from_expression not in self.expressions or to_expression not in self.expressions:
             raise ValueError("Invalid expression type")
             
-        # Simple crossfade between expressions
-        for i in range(steps + 1):
-            progress = i / steps
-            if progress < 0.5:
-                # Show first expression
+        # Draw each expression in sequence for a simple transition
+        for i in range(steps):
+            if i % 2 == 0:
                 self.draw_expression(from_expression)
             else:
-                # Show second expression
                 self.draw_expression(to_expression)
-            time.sleep(duration / steps) 
+            time.sleep(duration / steps)
+        
+        # Always end with the target expression
+        self.draw_expression(to_expression) 
