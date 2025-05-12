@@ -132,7 +132,7 @@ class FacialExpressions:
                     *sad_left,  # Left eye (with tear)
                     *sad_right,  # Right eye (with tear)
                     ((1, 6), (6, 6)),  # Frown top
-                    ((2, 5), (5, 5)),  # Frown bottom
+                    # ((2, 5), (5, 5)),  # Frown bottom
                     ((1, 6), (2, 5)),  # Left curve
                     ((5, 5), (6, 6))   # Right curve
                 ],
@@ -149,14 +149,14 @@ class FacialExpressions:
                     TalkState.CLOSED: [
                         *sad_left, *sad_right,  # Eyes
                         ((1, 6), (6, 6)),  # Frown top
-                        ((2, 5), (5, 5)),  # Frown bottom
+                        # ((2, 5), (5, 5)),  # Frown bottom
                         ((1, 6), (2, 5)),  # Left curve
                         ((5, 5), (6, 6))   # Right curve
                     ],
                     TalkState.PARTIAL: [
                         *sad_left, *sad_right,  # Eyes
                         ((1, 6), (6, 6)),  # Frown top
-                        ((2, 5), (5, 5)),  # Frown bottom
+                        # ((2, 5), (5, 5)),  # Frown bottom
                         ((1, 6), (2, 5)),  # Left curve
                         ((5, 5), (6, 6)),  # Right curve
                         ((1, 5), (2, 5)),  # Mouth left
@@ -212,7 +212,7 @@ class FacialExpressions:
                     *wink_left,  # Left eye (wink)
                     *wink_right,  # Right eye (happy)
                     ((1, 6), (6, 6)),  # Smile top
-                    ((2, 7), (5, 7)),  # Smile bottom
+                    # ((2, 7), (5, 7)),  # Smile bottom
                     ((1, 6), (2, 7)),  # Left curve
                     ((5, 7), (6, 6))   # Right curve
                 ],
@@ -229,7 +229,7 @@ class FacialExpressions:
                     TalkState.CLOSED: [
                         *wink_left, *wink_right,  # Eyes
                         ((1, 6), (6, 6)),  # Smile top
-                        ((2, 7), (5, 7)),  # Smile bottom
+                        # ((2, 7), (5, 7)),  # Smile bottom
                         ((1, 6), (2, 7)),  # Left curve
                         ((5, 7), (6, 6))   # Right curve
                     ],
